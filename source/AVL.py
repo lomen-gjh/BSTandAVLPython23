@@ -75,9 +75,26 @@ class Node:
             parent.left.left.updateBalance()
             parent.left.updateBalance()
         parent.updateBalance()
-    def rightLeftRot(self):
-        pass #nabuduce
-
+    def rightLeftRot(self, parent):
+        if self.data>parent.data:
+            parent.right=self.right.left
+            self.right.left=parent.right.right
+            parent.right.right=self.right
+            self.right=parent.right.left
+            parent.right.left=self
+            parent.right.right.updateBalance()
+            parent.right.left.updateBalance()
+            parent.right.updateBalance()
+        else:
+            parent.left = self.right.left
+            self.right.left = parent.left.right
+            parent.left.right = self.right
+            self.right = parent.left.left
+            parent.left.left = self
+            parent.left.right.updateBalance()
+            parent.left.left.updateBalance()
+            parent.left.updateBalance()
+        parent.updateBalance()
     def insert(self, data):
         if self.data>data:
             if self.left==None:
