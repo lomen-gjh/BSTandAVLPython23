@@ -20,8 +20,18 @@ class Node:
             self.depth=0
             self.balance=0
 
-    def rebalance(self):
-        pass
+    def rebalance(self, parent):
+        self.updateBalance()
+        if self.balance>1:
+            if self.left.balance>0:         #self left left
+                self.rightRot(parent)
+            else:                           #self left right
+                self.leftRightRot(parent)
+        elif self.balance<-1:
+            if self.right.balance<0:        #self right right
+                self.leftRot(parent)
+            else:                           #self right left
+                self.rightLeftRot(parent)
 
     def leftRot(self, parent):
         if self.data>parent.data:
@@ -95,17 +105,18 @@ class Node:
             parent.left.left.updateBalance()
             parent.left.updateBalance()
         parent.updateBalance()
-    def insert(self, data):
+    def insert(self, data, parent):
         if self.data>data:
             if self.left==None:
                 self.left=Node(data)
             else:
-                self.left.insert(data) #rekurzivne poslem dalej
+                self.left.insert(data, self) #rekurzivne poslem dalej
         elif self.data<data:
             if self.right==None:
                 self.right=Node(data)
             else:
-                self.right.insert(data)
+                self.right.insert(data, self)
+        self.rebalance(parent)
 
     def preorder(self):
         print(self.data, end=" ")
@@ -131,60 +142,6 @@ class Node:
     def drawNode(self, canvas,x,y):
         pass
 
-    def delete(self, target, parent):
-        if target<self.data:
-            if self.left!=None:
-                return self.left.delete(target, self)
-            else:
-                print("Neexistuje")
-                return None
-        elif target>self.data:
-            if self.right!=None:
-                return self.right.delete(target,self)
-            else:
-                print("Neexistuje")
-                return None
-        else:
-            replacement=self.findReplacement()
-            if parent.data>self.data:
-                parent.left=replacement
-            else:
-                parent.right=replacement
-            if replacement != None:
-                replacement.left=self.left
-                replacement.right=self.right
-
-    def findReplacement(self):
-        if self.left!=None:
-            if self.left.right!=None:
-                return self.left.right.findMax(self.left)
-            else:
-                forreturn=self.left
-                self.left=self.left.left
-                return forreturn
-        elif self.right!=None:
-            if self.right.left!=None:
-                return self.right.left.findMin(self.right)
-            else:
-                forreturn=self.right
-                self.right=self.right.right
-                return forreturn
-        else:
-            return None
-
-    def findMax(self, parent):
-        if self.right==None:
-            parent.right=self.left
-            return self
-        else:
-            return self.right.findMax(self)
-
-    def findMin(self, parent):
-        if self.left==None:
-            parent.left=self.right
-            return self
-        else:
-            return self.left.findMin(self)
 
 class AVLTree:
     def __init__(self):
@@ -194,9 +151,11 @@ class AVLTree:
         if self.root==None:
             self.root=Node(data)
         else:
-            self.root.insert(data)
-
-
+            fakeparent=Node(-1000)
+            fakeparent.right=self.root
+            fakeparent.updateBalance()
+            self.root.insert(data, fakeparent)
+            self.root=fakeparent.right
 
 
     def printTree(self):
@@ -210,5 +169,15 @@ class AVLTree:
             print("Postorder: ",end="")
             self.root.postorder()
             print()
+            print("---------------")
     def drawTree(self, canvas,x,y):
         pass
+
+avl=AVLTree()
+avl.insert(50)
+avl.insert(60)
+avl.insert(70)
+avl.printTree()
+avl.insert(80)
+avl.insert(90)
+avl.printTree()
