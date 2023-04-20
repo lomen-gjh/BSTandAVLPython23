@@ -5,4 +5,4 @@ The code contains 2 files with AVL and BST classes.
 A simple binary search tree including Node class. 
 
 # AVL 
-A balanced BST (hopefully) with working rotations.
+A balanced BST (hopefully) with working rotations. The AVL features only a insert function.
